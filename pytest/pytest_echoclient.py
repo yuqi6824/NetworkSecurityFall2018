@@ -12,17 +12,22 @@ async def echo_client(message, loop):
 
     data = await reader.read(100)
     print('Received: %r' % data.decode())
-    #print (data.decode())
+    print('response_message has been saved')
 
     if data.decode() == '_EXIT_':
-    	print('Close the socket')
-    	writer.close()
-n = '1'
+        print('Close the socket')
+        writer.close()
+i = 1
+base = 'response_message_'
 while(True):
-	message = input('Please enter your massage:')
-	loop = asyncio.get_event_loop()
-	loop.run_until_complete(echo_client(message, loop))
-
-	if message == '_EXIT_':
-		break
+    message = input('Please enter your massage:')
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(echo_client(message, loop))
+    # Create files
+    file_name = base + str(i)
+    i = i + 1
+    file = open(file_name, 'w')
+    file.write(message)
+    if message == '_EXIT_':
+        break
 loop.close()
