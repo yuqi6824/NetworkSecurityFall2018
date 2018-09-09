@@ -3,16 +3,14 @@
 
 import asyncio
 
-
 base = 'echo_message_'
-counter = -1
+counter = 0
 
 def increment():
   global counter
   counter = counter + 1 
   return counter
 
-increment()  
 async def echo_server(reader, writer):
     data = await reader.read(100)
     message = data.decode()
@@ -24,6 +22,7 @@ async def echo_server(reader, writer):
     file_name = base + str(i)
     file = open(file_name, 'w')
     file.write(message)
+    file.close()
     
     print("Send: %r" % message)
     print("echo_message has been saved")
