@@ -9,9 +9,9 @@ base = '8ball_response_'
 counter = 0
 
 def increment():
-  global counter
-  counter = counter + 1 
-  return counter
+    global counter
+    counter = counter + 1 
+    return counter
 
 async def ball_client(message, loop):
     reader, writer = await asyncio.open_connection('127.0.0.1', 8000,

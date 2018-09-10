@@ -7,9 +7,9 @@ base = 'echo_message_'
 counter = 0
 
 def increment():
-  global counter
-  counter = counter + 1 
-  return counter
+    global counter
+    counter = counter + 1 
+    return counter
 
 async def echo_server(reader, writer):
     data = await reader.read(100)

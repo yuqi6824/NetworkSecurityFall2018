@@ -12,9 +12,9 @@ dic = {}
 ls = ['Your guess is as good as mine.', 'You need a vacation.', 'It\'s Trump\'s fault!', 'I don\'t know. What do you think?', 'Nobody ever said it would be easy, they only said it would be worth it.', 'You really expect me to answer that?', 'You\'re going to get what you deserve.', 'That depends on how much you\'re willing to pay.']
 
 def increment():
-  global counter
-  counter = counter + 1 
-  return counter
+    global counter
+    counter = counter + 1 
+    return counter
 
 async def ball_server(reader, writer):
     data = await reader.read(100)
