@@ -3,6 +3,8 @@
 
 import asyncio
 import sys
+import datetime
+import time
 
 base = 'echo_message_'
 counter = 0
@@ -21,7 +23,10 @@ async def echo_server(reader, writer):
     #Create file
     i = increment()
     file_name = base + str(i)
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     file = open(file_name, 'w')
+    file.write(st + '\n')
     file.write(message)
     file.close()
     
@@ -30,7 +35,7 @@ async def echo_server(reader, writer):
     writer.write(data)
     await writer.drain()
     if message == '_EXIT_':
-        print("Close the client socket")
+        print("Close the socket")
         writer.close()
 
 def main(port):

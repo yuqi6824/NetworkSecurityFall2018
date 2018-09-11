@@ -3,6 +3,8 @@
 
 import asyncio
 import sys
+import time
+import datetime
 
 base = 'response_message_'
 counter = 0
@@ -26,7 +28,10 @@ async def echo_client(message, loop, port):
     massage = data.decode()
     i = increment()
     file_name = base + str(i)
+    ts = time.time()
+    st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
     file = open(file_name, 'w')
+    file.write(st + '\n')
     file.write(message)
     file.close()
 
@@ -36,7 +41,7 @@ async def echo_client(message, loop, port):
 
 def main(port):
     while(True):
-        message = input('Please enter your massage:')
+        message = input("Please input your meaasge:")
         loop = asyncio.get_event_loop()
         loop.run_until_complete(echo_client(message, loop, port))
         if message == '_EXIT_':
