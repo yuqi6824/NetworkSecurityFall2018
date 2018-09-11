@@ -5,6 +5,7 @@ import asyncio
 import random
 import time
 import datetime
+import sys
 
 base = '8ball_message_'
 counter = 0
@@ -52,17 +53,19 @@ async def ball_server(reader, writer):
         print("Close the client socket")
         writer.close()
 
-loop = asyncio.get_event_loop()
-coro = asyncio.start_server(ball_server, '127.0.0.1', 8000, loop=loop)
-server = loop.run_until_complete(coro)
+def main(port):
+    loop = asyncio.get_event_loop()
+    coro = asyncio.start_server(ball_server, '127.0.0.1', port, loop=loop)
+    server = loop.run_until_complete(coro)
+    print('Serving on {}'.format(server.sockets[0].getsockname()))
+    try:
+        loop.run_forever()
+    except KeyboardInterrupt:
+        pass
+    # Close the server
+    server.close()
+    loop.run_until_complete(server.wait_closed())
+    loop.close()
 
-print('Serving on {}'.format(server.sockets[0].getsockname()))
-try:
-    loop.run_forever()
-except KeyboardInterrupt:
-    pass
-
-# Close the server
-server.close()
-loop.run_until_complete(server.wait_closed())
-loop.close()
+if __name__ == '__main__':
+    main(*sys.argv[1:])
