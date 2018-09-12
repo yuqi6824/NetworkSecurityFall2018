@@ -65,9 +65,9 @@ async def secure_server(reader, writer):
     file.write(response)
     file.close()
     
-    print("Send: %r" % message)
+    #print("Send: %r" % message)
     print("Secure_message has been saved")
-    writer.write(data)
+    #writer.write(data)
     await writer.drain()
     if message == '_EXIT_':
         print("Close the socket")

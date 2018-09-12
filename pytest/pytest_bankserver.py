@@ -66,7 +66,7 @@ async def bank_server(reader, writer):
     
     #print("Send: %r" % message)
     print("bank_message has been saved")
-    writer.write(data)
+    #writer.write(data)
     await writer.drain()
     if message == '_EXIT_':
         print("Close the client socket")
