@@ -1,0 +1,448 @@
+
+
+
+Network Working Group                                    S. Nielson, Ed.
+Request for Comments: 1                   JHU Network Security Fall 2017
+Category: Standards Track                                 September 2018
+
+
+                    Playground Request For Comments
+
+Abstract
+
+   This document describes a easier version of DoD Standard Transmission
+   Control Protocol(ETCP).
+
+Status of this Memo
+
+   This document specifies a Playgrounds standards track protocol for
+   the Playground Experiment, and requests discussion and suggestions
+   for improvements.  Distribution of this memo is unlimited.
+
+Copyright Notice
+
+   Copyright (c) 2018 SETH JAMES NIELSON.  All rights reserved.
+
+   This document is used solely for educational purposes.  Any citations
+   within this document are also for educational purposes and also for
+   technical reference.  If any of these cited elements are protected
+   under copyright, their inclusion here falls under Fair Use
+   provisions.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nielson                      Standards Track                    [Page 1]
+
+RFC 1                            PRFC's                   September 2018
+
+
+Table of Contents
+
+   1.  1. INTRODUCTION . . . . . . . . . . . . . . . . . . . . . . . . 3
+     1.1.  1.1. Purpose/Technical Background . . . . . . . . . . . . . 3
+   2.  2. PHILOSOPHY . . . . . . . . . . . . . . . . . . . . . . . . . 3
+   3.  2.1. Session Establishment  . . . . . . . . . . . . . . . . . . 3
+   4.  2.2. Session Termination  . . . . . . . . . . . . . . . . . . . 4
+   5.  2.3. Data Transmission  . . . . . . . . . . . . . . . . . . . . 4
+   6.  3. FUNCTIONAL SPECIFICATION . . . . . . . . . . . . . . . . . . 4
+   7.  3.1. Packet Description . . . . . . . . . . . . . . . . . . . . 4
+   8.  3.2.  Computational Algorithms  . . . . . . . . . . . . . . . . 4
+   9.  3.3. State Machine  . . . . . . . . . . . . . . . . . . . . . . 5
+   10. Normative References  . . . . . . . . . . . . . . . . . . . . . 5
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 6
+   Intellectual Property and Copyright Statements  . . . . . . . . . . 7
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nielson                      Standards Track                    [Page 2]
+
+RFC 1                            PRFC's                   September 2018
+
+
+1.  1. INTRODUCTION
+
+   The Easier Transmission Control Protocol (ETCP) is intended for use
+   as a reliable host-to-host protocol in Playground.This document
+   describes the functions to be performed by the Transmission Control
+   Protocol, the program that implements it, and its interface to
+   programs or users that require its services.
+
+1.1.  1.1. Purpose/Technical Background
+
+   Computer communication systems are playing an increasingly important
+   role in military, government, and civilian environments.  This
+   document focuses its attention primarily on how the protocol works on
+   the Playground.  The ETCP provides for reliable inter-process
+   communication between pairs of processes in host computers attached
+   to distinct but interconnected computer communication networks.  RFC
+   2119 [RFC2119].
+
+
+2.  2. PHILOSOPHY
+
+
+3.  2.1. Session Establishment
+
+   To establish a connection, ETCP uses a three-way handshake.  Before a
+   client attempts to connect with a server, the server must first bind
+   to and listen at a port to open it up for connections: this is called
+   a passive open.  Once the passive open is established, a client may
+   initiate an active open.  To establish a connection, the three-way
+   (or 3-step) handshake occurs: 1.  The active open is performed by the
+   client sending a SYN to the server.  The client sets the segment's
+   sequence number to a random value A. 2.  In response, the server
+   replies with a SYN-ACK.  The acknowledgment number is set to one more
+   than the received sequence number i.e.  A+1, and the sequence number
+   that the server chooses for the packet is another random number, B.
+   3.  Finally, the client sends an ACK back to the server.  The
+   sequence number is set to the received acknowledgement value i.e.
+   A+1, and the acknowledgement number is set to one more than the
+   received sequence number i.e.  B+1.  At this point, both the client
+   and server have received an acknowledgment of the connection.  The
+   steps 1, 2 establish the connection parameter (sequence number) for
+   one direction and it is acknowledged.  The steps 2, 3 establish the
+   connection parameter (sequence number) for the other direction and it
+   is acknowledged.  With these, a full-duplex communication is
+   established.
+
+
+
+
+
+
+Nielson                      Standards Track                    [Page 3]
+
+RFC 1                            PRFC's                   September 2018
+
+
+4.  2.2. Session Termination
+
+   To terminate a connection, ETCP uses a simplified handshake.  After
+   the side that sent the first FIN has responded with the final ACK, it
+   waits for a timeout before finally closing the connection, during
+   which time the local port is unavailable for new connections; this
+   prevents confusion due to delayed packets being delivered during
+   subsequent connections.
+
+
+5.  2.3. Data Transmission
+
+   The data that flows on a connection may be thought of as a stream of
+   octets.  The sending user indicates in each SEND call whether the
+   data in that call (and any preceeding calls) should be immediately
+   pushed through to the receiving user by the setting of the PUSH flag.
+   A sending ETCP is allowed to collect data from the sending user and
+   to send that data in segments at its own convenience, until the push
+   function is signaled, then it must send all unsent data.  When a
+   receiving TCP sees the PUSH flag, it must not wait for more data from
+   the sending ETCP before passing the data to the receiving process.
+   To assure correctness a checksum field is included; see checksum
+   computation section for details on checksumming.  The ETCP checksum
+   is a weak check by modern standards.  Data Link Layers with high bit
+   error rates may require additional link error correction/detection
+   capabilities.  The weak checksum is partially compensated for by the
+   common use of a CRC or better integrity check at layer 2, below both
+   TCP and IP, such as is used in PPP or the Ethernet frame.  However,
+   this does not mean that the 16-bit TCP checksum is redundant:
+   remarkably, introduction of errors in packets between CRC-protected
+   hops is common, but the end-to-end 16-bit ETCP checksum catches most
+   of these simple errors.  This is the end-to-end principle at work.
+
+
+6.  3. FUNCTIONAL SPECIFICATION
+
+
+7.  3.1. Packet Description
+
+   The packet used in ETCP inherits from PacketType.  Each packet has a
+   FiledList which contains filed, such as UINT (with UINT8, UINT16,
+   UINT32, and UINT64 variants), INT (with INT8, INT16, INT32, and INT64
+   variants),BOOL, LIST, STRING, BUFFER and ComplexFieldType.
+
+
+8.  3.2.  Computational Algorithms
+
+   The checksum field is the 16 bit one's complement of the one's
+
+
+
+Nielson                      Standards Track                    [Page 4]
+
+RFC 1                            PRFC's                   September 2018
+
+
+   complement sum of all 16-bit words in the header and text.  If a
+   segment contains an odd number of header and text octets to be
+   checksummed, the last octet is padded on the right with zeros to form
+   a 16-bit word for checksum purposes.  The pad is not transmitted as
+   part of the segment.  While computing the checksum, the checksum
+   field itself is replaced with zeros.
+
+
+9.  3.3. State Machine
+
+   A ETCP connection is managed by an operating system through a
+   programming interface that represents the local end-point for
+   communications, the Internet socket.  During the lifetime of a TCP
+   connection the local end-point undergoes a series of state changes:
+   LISTEN:(server) represents waiting for a connection request from any
+   remote ETCP and port.  SYN-SENT:(client) represents waiting for a
+   matching connection request after having sent a connection request.
+   SYN-RECEIVED:(server) represents waiting for a confirming connection
+   request acknowledgment after having both received and sent a
+   connection request.  ESTABLISHED:(both server and client) represents
+   an open connection, data received can be delivered to the user.  The
+   normal state for the data transfer phase of the connection.  CLOSE-
+   WAIT:(both server and client) represents waiting for a connection
+   termination request from the local user.  CLOSING:(both server and
+   client) represents waiting for a connection termination request
+   acknowledgment from the remote TCP.  LAST-ACK:(both server and
+   client) represents waiting for an acknowledgment of the connection
+   termination request previously sent to the remote TCP (which includes
+   an acknowledgment of its connection termination request).  TIME-
+   WAIT:(either server or client) represents waiting for enough time to
+   pass to be sure the remote TCP received the acknowledgment of its
+   connection termination request.  [According to RFC 793 a connection
+   can stay in TIME-WAIT for a maximum of four minutes known as two MSL
+   (maximum segment lifetime).]
+
+
+10.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
+              RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC2360]  Scott, G., "Guide for Internet Standards Writers", BCP 22,
+              RFC 2360, DOI 10.17487/RFC2360, June 1998,
+              <https://www.rfc-editor.org/info/rfc2360>.
+
+
+
+
+
+Nielson                      Standards Track                    [Page 5]
+
+RFC 1                            PRFC's                   September 2018
+
+
+Author's Address
+
+   Seth James Nielson (editor)
+   JHU Network Security Fall 2017
+   JHU 160 Malone Hall/3400 North Charles St.
+   Baltimore, MD  21218
+   USA
+
+   Phone: +1 410-497-7384
+   Email: sethjn@cs.jhu.edu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nielson                      Standards Track                    [Page 6]
+
+RFC 1                            PRFC's                   September 2018
+
+
+Full Copyright Statement
+
+   Copyright (C) Seth James Nielson (2018).  All Rights Reserved.
+
+   This document and translations of it may be copied and furnished to
+   others, and derivative works that comment on or otherwise explain it
+   or assist in its implementation may be prepared, copied, published
+   and distributed, in whole or in part, without restriction of any
+   kind, provided that the above copyright notice and this paragraph are
+   included on all such copies and derivative works.  However, this
+   document itself may not be modified in any way, such as by removing
+   the copyright notice or references to the PLAYGROUND experiment or
+   other associated organizations, except by explicit permission.
+
+   The limited permissions granted above are perpetual and will not be
+   revoked by SETH JAMES NIELSON or his successors or assigns.
+
+   This document and the information contained herein is provided on an
+   "AS IS" basis and SETH JAMES NIELSON and associated academic
+   institutions DISCLAIM ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+   BUT NOT LIMITED TO ANY WARRANTY THAT THE USE OF THE INFORMATION
+   HEREIN WILL NOT INFRINGE ANY RIGHTS OR ANY IMPLIED WARRANTIES OF
+   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+
+Intellectual Property
+
+   The PLAYGROUND framework and student submissions for PLAYGROUND are
+   intended to be free of any intellectual property conflicts.  All
+   submitting parties, especially students, are not allowed to submit
+   source code, specifications, or other components that are known to be
+   protected by copyright, patents, or other IP mechanisms.  Students
+   submitting creative content grant shared rights and ownership of
+   their content to the PLAYGROUND project.  Specifically, any
+   submission can be used in future educational settings including
+   subsequent PLAYGROUND experiments.
+
+   Any interested party is invited to bring to the experiment director's
+   attention any copyrights, patents or patent applications, or other
+   proprietary rights which may cover technology that may be currently
+   in use without permission.
+
+   It should be noted that these statements have not been reviewed by
+   legal counsel.  Moreover, the academic institutions at which
+   PLAYGROUND experiments take place may have additional or even
+   conflicting copyright and intellectual property rules.  Accordingly,
+   concerned parties may need to contact their own lawyer and/or
+   resources at their institution to understand the rights and
+
+
+
+Nielson                      Standards Track                    [Page 7]
+
+RFC 1                            PRFC's                   September 2018
+
+
+   limitations associated with code donated to a PLAYGROUND experiment.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Nielson                      Standards Track                    [Page 8]
+
