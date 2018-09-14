@@ -1,7 +1,7 @@
 
 
 
-Network Working Group                                    S. Nielson, Ed.
+Network Working Group                                        Yu Qiu, Ed.
 Request for Comments: 1                   JHU Network Security Fall 2017
 Category: Standards Track                                 September 2018
 
@@ -52,7 +52,7 @@ Copyright Notice
 
 
 
-Nielson                      Standards Track                    [Page 1]
+Yu Qiu                       Standards Track                    [Page 1]
 
 RFC 1                            PRFC's                   September 2018
 
@@ -69,7 +69,8 @@ Table of Contents
    7.  3.1. Packet Description . . . . . . . . . . . . . . . . . . . . 4
    8.  3.2.  Computational Algorithms  . . . . . . . . . . . . . . . . 4
    9.  3.3. State Machine  . . . . . . . . . . . . . . . . . . . . . . 5
-   10. Normative References  . . . . . . . . . . . . . . . . . . . . . 5
+   10. reference . . . . . . . . . . . . . . . . . . . . . . . . . . . 5
+   11. Normative References  . . . . . . . . . . . . . . . . . . . . . 5
    Author's Address  . . . . . . . . . . . . . . . . . . . . . . . . . 6
    Intellectual Property and Copyright Statements  . . . . . . . . . . 7
 
@@ -107,8 +108,7 @@ Table of Contents
 
 
 
-
-Nielson                      Standards Track                    [Page 2]
+Yu Qiu                       Standards Track                    [Page 2]
 
 RFC 1                            PRFC's                   September 2018
 
@@ -164,7 +164,7 @@ RFC 1                            PRFC's                   September 2018
 
 
 
-Nielson                      Standards Track                    [Page 3]
+Yu Qiu                       Standards Track                    [Page 3]
 
 RFC 1                            PRFC's                   September 2018
 
@@ -220,7 +220,7 @@ RFC 1                            PRFC's                   September 2018
 
 
 
-Nielson                      Standards Track                    [Page 4]
+Yu Qiu                       Standards Track                    [Page 4]
 
 RFC 1                            PRFC's                   September 2018
 
@@ -261,29 +261,34 @@ RFC 1                            PRFC's                   September 2018
    (maximum segment lifetime).]
 
 
-10.  Normative References
+10.  reference
+
+   [1] Wikipedia, Transmission Control Protocol
+
+
+11.  Normative References
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, DOI 10.17487/
               RFC2119, March 1997,
               <https://www.rfc-editor.org/info/rfc2119>.
 
+
+
+
+Yu Qiu                       Standards Track                    [Page 5]
+
+RFC 1                            PRFC's                   September 2018
+
+
    [RFC2360]  Scott, G., "Guide for Internet Standards Writers", BCP 22,
               RFC 2360, DOI 10.17487/RFC2360, June 1998,
               <https://www.rfc-editor.org/info/rfc2360>.
 
 
-
-
-
-Nielson                      Standards Track                    [Page 5]
-
-RFC 1                            PRFC's                   September 2018
-
-
 Author's Address
 
-   Seth James Nielson (editor)
+   Yu Qiu (editor)
    JHU Network Security Fall 2017
    JHU 160 Malone Hall/3400 North Charles St.
    Baltimore, MD  21218
@@ -327,12 +332,7 @@ Author's Address
 
 
 
-
-
-
-
-
-Nielson                      Standards Track                    [Page 6]
+Yu Qiu                       Standards Track                    [Page 6]
 
 RFC 1                            PRFC's                   September 2018
 
@@ -388,7 +388,7 @@ Intellectual Property
 
 
 
-Nielson                      Standards Track                    [Page 7]
+Yu Qiu                       Standards Track                    [Page 7]
 
 RFC 1                            PRFC's                   September 2018
 
@@ -444,5 +444,5 @@ RFC 1                            PRFC's                   September 2018
 
 
 
-Nielson                      Standards Track                    [Page 8]
+Yu Qiu                       Standards Track                    [Page 8]
 

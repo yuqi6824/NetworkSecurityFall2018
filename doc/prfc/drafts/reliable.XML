@@ -62,8 +62,8 @@
 
    <!-- Another author who claims to be an editor -->
 
-   <author fullname="Seth James Nielson" initials="S.J." role="editor"
-           surname="Nielson">
+   <author fullname="Yu Qiu" role="editor"
+           surname="Yu Qiu">
      <organization>JHU Network Security Fall 2017</organization>
 
      <address>
@@ -180,6 +180,10 @@ CLOSING:(both server and client) represents waiting for a connection termination
 LAST-ACK:(both server and client) represents waiting for an acknowledgment of the connection termination request previously sent to the remote TCP (which includes an acknowledgment of its connection termination request).
 TIME-WAIT:(either server or client) represents waiting for enough time to pass to be sure the remote TCP received the acknowledgment of its connection termination request. [According to RFC 793 a connection can stay in TIME-WAIT for a maximum of four minutes known as two MSL (maximum segment lifetime).]
 </t>
+   </section>
+
+   <section title="reference">
+    <t>[1] Wikipedia, Transmission Control Protocol </t>
    </section>
  </middle>
 
