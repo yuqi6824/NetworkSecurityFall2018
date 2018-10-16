@@ -1,6 +1,6 @@
 import asyncio
 from .RIPPPacket import RIPPPacket
-from .RIPPTransports.RIPPTransport import RIPPTransport
+from .RIPPTransport import RIPPTransport
 from .RIPPProtocol import RIPPProtocol
 import time
 

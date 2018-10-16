@@ -1,5 +1,5 @@
 from playground.network.common import StackingTransport
-from ..RIPPPacket import RIPPPacket
+from .RIPPPacket import RIPPPacket
 import time
 import asyncio
 import random
