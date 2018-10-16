@@ -107,8 +107,6 @@ class RIPPProtocol(StackingProtocol):
         else:
             print("Error: Received DATA packet with lower sequence number " + str(pkt.SeqNo) + ",current: {!r}, discarded.".format(self.associatedSeqNum))
 
-        # send an ack anyway
-
     def processAckPkt(self, pkt):
         print("Received ACK packet with acknowledgement number " + str(pkt.AckNo))
         latestAckNo = pkt.AckNo
