@@ -26,7 +26,7 @@ class RIPPTransport(StackingTransport):
                     else:
                         sentData = data[i:]
                     i += len(sentData)
-                    pkt = RIPPPacket.makeDataPacket(self.protocol.seqNum, sentData)
+                    pkt = RIPPPacket.createDataPacket(self.protocol.seqNum, sentData)
                     index += 1
                     ackNumber = self.protocol.seqNum + len(sentData)
                     if len(self.protocol.sentDataCache) <= self.protocol.WINDOW_SIZE:

@@ -1,8 +1,6 @@
 import asyncio
-
 from .RIPPPacket import RIPPPacket
 from .RIPPTransports.RIPPTransport import RIPPTransport
-
 from .RIPPProtocol import RIPPProtocol
 import time
 
@@ -64,7 +62,7 @@ class ClientProtocol(RIPPProtocol):
 
                     elif (pkt.Type, self.state, pkt.AckNo) == (RIPPPacket.TYPE_FIN + RIPPPacket.TYPE_ACK, self.STATE_CLIENT_CLOSING, self.seqNum + 1) or \
                     (pkt.Type, self.state, pkt.AckNo) == (RIPPPacket.TYPE_FIN + RIPPPacket.TYPE_ACK, self.STATE_CLIENT_CLOSED, self.seqNum + 1):
-                        print("Received FIN-ACK packet with ack number " + str(pkt.AckNo))
+                        print("Received FIN_ACK packet with ack number " + str(pkt.AckNo))
                         self.state = self.STATE_CLIENT_CLOSED
                         print("Closing...")
                         self.transport.close()
@@ -72,7 +70,7 @@ class ClientProtocol(RIPPProtocol):
                     else:
                         print("Client: Wrong packet: sequence num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, RIPPPacket.TYPE_DESC[pkt.Type], self.STATE_DESC[self.state]))
                 else:
-                    print("Wrong packet checksum: " + str(pkt.Checksum))
+                    print("Wrong packet checksum: " + str(pkt.CRC))
             else:
                 print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE_DESC[self.state]))
 

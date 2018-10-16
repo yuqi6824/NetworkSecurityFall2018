@@ -4,6 +4,7 @@ from playground.network.packet.fieldtypes.attributes import Optional
 import hashlib
 
 class RIPPPacket(PacketType):
+    
     TYPE_DESC = {
         0: "SYN",
         1: "ACK",
@@ -31,6 +32,51 @@ class RIPPPacket(PacketType):
         super().__init__()
         self.CRC = b""
 
+    def createSynPacket(seq):
+        pkt = RIPPPacket()
+        pkt.Type = pkt.TYPE_SYN
+        pkt.SeqNo = seq
+        pkt.CRC = pkt.calculateChecksum()
+        return pkt
+
+    def createSynAckPacket(seq, ack):
+        pkt = RIPPPacket()
+        pkt.Type = pkt.TYPE_SYN + pkt.TYPE_ACK
+        pkt.SeqNo = seq
+        pkt.AckNo = ack
+        pkt.CRC = pkt.calculateChecksum()
+        return pkt
+
+    def createAckPacket(ack):
+        pkt = RIPPPacket()
+        pkt.Type = pkt.TYPE_ACK
+        pkt.AckNo = ack
+        pkt.CRC = pkt.calculateChecksum()
+        return pkt
+
+    def createFinPacket(seq, ack):
+        pkt = RIPPPacket()
+        pkt.Type = pkt.TYPE_FIN
+        pkt.SeqNo = seq
+        pkt.AckNo = ack
+        pkt.CRC = pkt.calculateChecksum()
+        return pkt
+
+    def createFinAckPacket(ack):
+        pkt = RIPPPacket()
+        pkt.Type = pkt.TYPE_FIN + pkt.TYPE_ACK
+        pkt.AckNo = ack
+        pkt.CRC = pkt.calculateChecksum()
+        return pkt
+
+    def createDataPacket(seq, data):
+        pkt = RIPPPacket()
+        pkt.Type = pkt.TYPE_DATA
+        pkt.SeqNo = seq
+        pkt.Data = data
+        pkt.CRC = pkt.calculateChecksum()
+        return pkt
+
     def calculateChecksum(self):
         oldChecksum = self.CRC
         self.CRC = b""
@@ -40,54 +86,3 @@ class RIPPPacket(PacketType):
         
     def verifyChecksum(self):
         return self.CRC == self.calculateChecksum()
-
-    @classmethod
-    def makeSynPacket(cls, seq):
-        pkt = cls()
-        pkt.Type = cls.TYPE_SYN
-        pkt.SeqNo = seq
-        pkt.CRC = pkt.calculateChecksum()
-        return pkt
-
-    @classmethod
-    def makeSynAckPacket(cls, seq, ack):
-        pkt = cls()
-        pkt.Type = cls.TYPE_SYN + cls.TYPE_ACK
-        pkt.SeqNo = seq
-        pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
-        return pkt
-
-    @classmethod
-    def makeAckPacket(cls, ack):
-        pkt = cls()
-        pkt.Type = cls.TYPE_ACK
-        pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
-        return pkt
-
-    @classmethod
-    def makeFinPacket(cls, seq, ack):
-        pkt = cls()
-        pkt.Type = cls.TYPE_FIN
-        pkt.SeqNo = seq
-        pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
-        return pkt
-
-    @classmethod
-    def makeFinAckPacket(cls, ack):
-        pkt = cls()
-        pkt.Type = cls.TYPE_FIN + cls.TYPE_ACK
-        pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
-        return pkt
-
-    @classmethod
-    def makeDataPacket(cls, seq, data):
-        pkt = cls()
-        pkt.Type = cls.TYPE_DATA
-        pkt.SeqNo = seq
-        pkt.Data = data
-        pkt.CRC = pkt.calculateChecksum()
-        return pkt
