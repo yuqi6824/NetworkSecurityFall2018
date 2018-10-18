@@ -38,7 +38,6 @@ class ServerProtocol(RIPPProtocol):
                         else:
                             print("Server: Wrong ACK packet: ACK number: {!r}, seq number: {!r}, expected: {!r}, {!r}".format(pkt.AckNo, pkt.SeqNo, self.seqNum, self.associatedSeqNum))
 
-
                     elif pkt.Type == RIPPPacket.TYPE_ACK and self.state in (self.STATE_SERVER_TRANSMISSION, self.STATE_SERVER_CLOSING):
                         self.processAckPkt(pkt)
 
@@ -55,7 +54,6 @@ class ServerProtocol(RIPPProtocol):
                         self.transport.close()
                         self.state = self.STATE_SERVER_CLOSED
 
-
                     elif (pkt.Type, self.state, pkt.AckNo) == (RIPPPacket.TYPE_FIN + RIPPPacket.TYPE_ACK, self.STATE_SERVER_CLOSING, self.seqNum + 1) or \
                     (pkt.Type, self.state, pkt.AckNo) == (RIPPPacket.TYPE_FIN + RIPPPacket.TYPE_ACK, self.STATE_SERVER_CLOSED, self.seqNum + 1):
                         Print("Received FIN_ACK packet with ack number " + str(pkt.AckNo))
@@ -64,7 +62,7 @@ class ServerProtocol(RIPPProtocol):
                         self.transport.close()
 
                     else:
-                        print("Server: Wrong packet: seq num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, RIPPPacket.TYPE_DESC[pkt.Type], self.STATE_DESC[self.state]))
+                        print("Server: Wrong packet: seq num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE_DESC[self.state]))
                 else:
                     print("Wrong packet checksum: " + str(pkt.CRC))
             else:

@@ -68,7 +68,7 @@ class ClientProtocol(RIPPProtocol):
                         self.transport.close()
 
                     else:
-                        print("Client: Wrong packet: sequence num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, RIPPPacket.TYPE_DESC[pkt.Type], self.STATE_DESC[self.state]))
+                        print("Client: Wrong packet: sequence num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE_DESC[self.state]))
                 else:
                     print("Wrong packet checksum: " + str(pkt.CRC))
             else:
