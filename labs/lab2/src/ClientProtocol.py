@@ -3,9 +3,11 @@ from .RIPPPacket import RIPPPacket
 from .RIPPTransport import RIPPTransport
 from .RIPPProtocol import RIPPProtocol
 import time
+from .Timer import Timer
 
 
 class ClientProtocol(RIPPProtocol):
+
     def __init__(self):
         super().__init__()
         self.state = self.STATE_CLIENT_INITIAL_SYN
@@ -18,7 +20,6 @@ class ClientProtocol(RIPPProtocol):
             self.sendSyn()
             self.seqNum += 1
             self.state = self.STATE_CLIENT_SYN_SENT
-            self.tasks.append(asyncio.ensure_future(self.checkState([self.STATE_CLIENT_TRANSMISSION, self.STATE_CLIENT_CLOSING, self.STATE_CLIENT_CLOSED], self.sendSyn)))
 
     def data_received(self, data):
         self.deserializer.update(data)
@@ -35,7 +36,6 @@ class ClientProtocol(RIPPProtocol):
                                 self.sendAck()
                                 higherTransport = RIPPTransport(self.transport, self)
                                 self.higherProtocol().connection_made(higherTransport)
-                                self.tasks.append(asyncio.ensure_future(self.scanCache()))
                             else:
                                 print("Client: Wrong SYN_ACK packet: ACK number: {!r}, expected: {!r}".format(pkt.AckNo, self.seqNum + 1))
                         else:
@@ -74,15 +74,15 @@ class ClientProtocol(RIPPProtocol):
             else:
                 print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE_DESC[self.state]))
 
-    def connection_lost(self, exc):
-        print("Connection closed")
-        self.higherProtocol().connection_lost(exc)
-        self.transport = None
-
     def prepareForFin(self):
         print("Preparing for FIN...")
         self.state = self.STATE_CLIENT_CLOSING
         self.transport.close()
+
+    def connection_lost(self, exc):
+        print("Connection closed")
+        self.higherProtocol().connection_lost(exc)
+        self.transport = None
 
     def isClosing(self):
         return self.state == self.STATE_CLIENT_CLOSING or self.state == self.STATE_CLIENT_CLOSED

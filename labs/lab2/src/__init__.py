@@ -11,4 +11,4 @@ f_server = StackingProtocolFactory(lambda: ServerProtocol())
 
 ptConnector = playground.Connector(protocolStack=(f_client, f_server))
 
-playground.setConnector("lab1protocol", ptConnector)
+playground.setConnector("lab2_protocol", ptConnector)

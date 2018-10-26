@@ -4,13 +4,6 @@ from playground.network.packet.fieldtypes.attributes import Optional
 import hashlib
 
 class RIPPPacket(PacketType):
-    
-    TYPE_DESC = {
-        0: "SYN",
-        1: "ACK",
-        2: "FIN",
-        3: "DATA",
-    }
 
     TYPE_SYN = "SYN"
     TYPE_ACK = "ACK"
@@ -82,7 +75,7 @@ class RIPPPacket(PacketType):
         self.CRC = b""
         bytes = self.__serialize__()
         self.CRC = oldChecksum
-        return hashlib.sha256(bytes).hexdigest().encode()
+        return hashlib.sha256(bytes).digest()
         
     def verifyChecksum(self):
         return self.CRC == self.calculateChecksum()

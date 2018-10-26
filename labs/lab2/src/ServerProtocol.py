@@ -3,15 +3,18 @@ from .RIPPPacket import RIPPPacket
 from .RIPPTransport import RIPPTransport
 from .RIPPProtocol import RIPPProtocol
 import time
+from .Timer import Timer
 
 
 class ServerProtocol(RIPPProtocol):
+
     def __init__(self):
         super().__init__()
         self.state = self.STATE_SERVER_LISTEN
         print("Initialized server with state " + self.STATE_DESC[self.state])
 
     def connection_made(self, transport):
+        super().connection_made(transport)
         self.transport = transport
 
     def data_received(self, data):
@@ -26,7 +29,6 @@ class ServerProtocol(RIPPProtocol):
                         synAck_seq = self.seqNum
                         self.sendSynAck(synAck_seq)
                         self.seqNum += 1
-                        self.tasks.append(asyncio.ensure_future(self.checkState([self.STATE_SERVER_TRANSMISSION, self.STATE_SERVER_CLOSING, self.STATE_SERVER_CLOSED], lambda: self.sendSynAck(synAck_seq))))
 
                     elif (pkt.Type, self.state) == (RIPPPacket.TYPE_ACK, self.STATE_SERVER_SYN_ACK_SENT):
                         if pkt.AckNo == self.seqNum:
@@ -34,14 +36,13 @@ class ServerProtocol(RIPPProtocol):
                             self.state = self.STATE_SERVER_TRANSMISSION
                             higherTransport = RIPPTransport(self.transport, self)
                             self.higherProtocol().connection_made(higherTransport)
-                            self.tasks.append(asyncio.ensure_future(self.scanCache()))
                         else:
-                            print("Server: Wrong ACK packet: ACK number: {!r}, seq number: {!r}, expected: {!r}, {!r}".format(pkt.AckNo, pkt.SeqNo, self.seqNum, self.associatedSeqNum))
+                            print("Server: Wrong ACK packet: acknowledgement number: {!r}, seq number: {!r}, expected: {!r}, {!r}".format(pkt.AckNo, pkt.SeqNo, self.seqNum, self.associatedSeqNum))
 
                     elif pkt.Type == RIPPPacket.TYPE_ACK and self.state in (self.STATE_SERVER_TRANSMISSION, self.STATE_SERVER_CLOSING):
                         self.processAckPkt(pkt)
 
-                    elif (pkt.Type, self.state) == (RIPPPacket.TYPE_DATA, self.STATE_SERVER_TRANSMISSION):
+                    elif (pkt.Type, self.state) == (RIPPPacket.TYPE_DATA, self.STATE_SERVER_TRANSMISSION or self.STATE_SERVER_LISTEN):
                         self.processDataPkt(pkt)
 
                     elif (pkt.Type, self.state) == (RIPPPacket.TYPE_FIN, self.STATE_SERVER_TRANSMISSION) or\
@@ -68,16 +69,14 @@ class ServerProtocol(RIPPProtocol):
             else:
                 print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE_DESC[self.state]))
 
-    def connection_lost(self, exc):
-        print("Connection closed")
-        self.higherProtocol().connection_lost(exc)
-
-
     def prepareForFin(self):
         print("Preparing for Fin...")
         self.state = self.STATE_SERVER_CLOSING
         self.transport.close()
 
+    def connection_lost(self, exc):
+        print("Connection closed")
+        self.higherProtocol().connection_lost(exc)
 
     def isClosing(self):
         return self.state == self.STATE_SERVER_CLOSING or self.state == self.STATE_SERVER_CLOSED

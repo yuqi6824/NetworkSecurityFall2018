@@ -4,13 +4,12 @@ import random
 import time
 from playground.network.common import StackingProtocol
 from .RIPPPacket import RIPPPacket
+from .Timer import Timer
+from .Timer import shutdown
 
 
 class RIPPProtocol(StackingProtocol):
-    WINDOW_SIZE = 10
-    TIMEOUT = 0.5
-    MAX_RIP_RETRIES = 4
-    SCAN_INTERVAL = 0.01
+    WINDOW_SIZE = 50
 
     STATE_DESC = {
         0: "DEFAULT",
@@ -40,6 +39,8 @@ class RIPPProtocol(StackingProtocol):
     STATE_CLIENT_CLOSING = 23
     STATE_CLIENT_CLOSED = 24
 
+    RUN_TIME = 40
+
     def __init__(self):
         super().__init__()
         self.state = self.STATE_DEFAULT
@@ -52,6 +53,9 @@ class RIPPProtocol(StackingProtocol):
         self.sendingDataBuffer = []
         self.receivedDataBuffer = {}
         self.tasks = []
+        self.loop = asyncio.get_event_loop()
+        self.timers = {}
+        self.timer = shutdown(self.RUN_TIME, self.loop.stop, self.loop)
 
     def sendSyn(self):
         synPacket = RIPPPacket.createSynPacket(self.initialSeq)
@@ -100,53 +104,27 @@ class RIPPProtocol(StackingProtocol):
         elif pkt.SeqNo > self.associatedSeqNum:
             print("Received DATA packet with higher sequence number " + str(pkt.SeqNo) + ", buffered.")
             self.receivedDataBuffer[pkt.SeqNo] = pkt
-            AckNo = self.associatedSeqNum
-            ackPacket = RIPPPacket.createAckPacket(AckNo)
-            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
-            self.transport.write(ackPacket.__serialize__())
+            # AckNo = self.associatedSeqNum
+            # ackPacket = RIPPPacket.createAckPacket(AckNo)
+            # print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
+            # self.transport.write(ackPacket.__serialize__())
         else:
             print("Error: Received DATA packet with lower sequence number " + str(pkt.SeqNo) + ",current: {!r}, discarded.".format(self.associatedSeqNum))
+            AckNo = pkt.SeqNo + len(pkt.Data)
+            ackPacket = RIPPPacket.createAckPacket(AckNo)
+            self.transport.write(ackPacket.__serialize__())
+            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
 
     def processAckPkt(self, pkt):
         print("Received ACK packet with acknowledgement number " + str(pkt.AckNo))
         latestAckNo = pkt.AckNo
-        for ackNumber in list(self.sentDataCache):
-            if ackNumber <= latestAckNo:
-                if len(self.sendingDataBuffer) > 0:
-                    (nextAck, dataPkt) = self.sendingDataBuffer.pop(0)
-                    print("Sending next packet " + str(nextAck) + " in sendingDataBuffer...")
-                    self.sentDataCache[nextAck] = (dataPkt, time.time())
-                    self.transport.write(dataPkt.__serialize__())
-                del self.sentDataCache[ackNumber]
-
-    async def checkState(self, states, callback, maxRetry=-1):
-        retry = maxRetry
-        while self.state not in states and retry != 0:
-            print("checkState at time " + str(time.time()))
-            await asyncio.sleep(self.TIMEOUT)
-            print("checkState (after sleep) at time " + str(time.time()))
-            if self.state not in states:
-                print("Timeout on state " + self.STATE_DESC[self.state] +", expected " + str([self.STATE_DESC[state] for state in states]))
-                callback()
-            if retry > 0:
-                retry -= 1
-
-    async def scanCache(self):
-        while not self.isClosing():
-            for ackNumber in self.sentDataCache:
-                (dataPkt, timestamp) = self.sentDataCache[ackNumber]
-                currentTime = time.time()
-                if currentTime - timestamp >= self.TIMEOUT:
-                    # resend data packet after timeout
-                    print("Resending packet " + str(dataPkt.SeqNo) + " in cache...")
-                    self.transport.write(dataPkt.__serialize__())
-                    self.sentDataCache[ackNumber] = (dataPkt, currentTime)
-            await asyncio.sleep(self.SCAN_INTERVAL)
-
-    async def checkAllSent(self, callback):
-        while self.sentDataCache or self.sendingDataBuffer:
-            await asyncio.sleep(self.SCAN_INTERVAL)
-        callback()
+        while latestAckNo in list(self.timers):
+            self.timers[latestAckNo].cancel()
+            del self.timers[latestAckNo]
+            break
+        while latestAckNo in list(self.sentDataCache):
+            del self.sentDataCache[latestAckNo]
+            break
 
     def isClosing(self):
         raise NotImplementedError("isClosing() not implemented")
