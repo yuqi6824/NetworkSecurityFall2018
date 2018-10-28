@@ -9,7 +9,7 @@ from .Timer import shutdown
 
 
 class RIPPProtocol(StackingProtocol):
-    WINDOW_SIZE = 50
+    WINDOW_SIZE = 60
 
     STATE_DESC = {
         0: "DEFAULT",
