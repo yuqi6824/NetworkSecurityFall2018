@@ -11,7 +11,7 @@ from .Timer import shutdown
 class RIPPProtocol(StackingProtocol):
     WINDOW_SIZE = 60
 
-    STATE_DESC = {
+    STATE = {
         0: "DEFAULT",
         10: "SERVER_LISTEN",
         11: "SERVER_SYN_ACK_SENT",
@@ -59,27 +59,27 @@ class RIPPProtocol(StackingProtocol):
 
     def sendSyn(self):
         synPacket = RIPPPacket.createSynPacket(self.initialSeq)
-        print("Sending SYN packet with sequence number " + str(self.initialSeq) +", current state " + self.STATE_DESC[self.state])
+        print("Sending SYN packet with sequence number " + str(self.initialSeq) +", current state " + self.STATE[self.state])
         self.transport.write(synPacket.__serialize__())
 
     def sendSynAck(self, synAck_seqNum):
         synAckPacket = RIPPPacket.createSynAckPacket(synAck_seqNum, self.associatedSeqNum)
-        print("Sending SYN_ACK packet with sequence number " + str(synAck_seqNum) + ", ack number " + str(self.associatedSeqNum) + ", current state " + self.STATE_DESC[self.state])
+        print("Sending SYN_ACK packet with sequence number " + str(synAck_seqNum) + ", ack number " + str(self.associatedSeqNum) + ", current state " + self.STATE[self.state])
         self.transport.write(synAckPacket.__serialize__())
 
     def sendAck(self):
         ackPacket = RIPPPacket.createAckPacket(self.associatedSeqNum)
-        print("Sending ACK packet with ack number " + str(self.associatedSeqNum) + ", current state " + self.STATE_DESC[self.state])
+        print("Sending ACK packet with ack number " + str(self.associatedSeqNum) + ", current state " + self.STATE[self.state])
         self.transport.write(ackPacket.__serialize__())
 
     def sendFin(self):
         finPacket = RIPPPacket.createFinPacket(self.seqNum, self.associatedSeqNum)
-        print("Sending FIN packet with sequence number " + str(self.seqNum) + ", current state " + self.STATE_DESC[self.state])
+        print("Sending FIN packet with sequence number " + str(self.seqNum) + ", current state " + self.STATE[self.state])
         self.transport.write(finPacket.__serialize__())
 
     def sendFinAck(self):
         finAckPacket = RIPPPacket.createFinAckPacket(self.associatedSeqNum)
-        print("Sending FIN-ACK packet with ack number " + str(self.associatedSeqNum) + ", current state " + self.STATE_DESC[self.state])
+        print("Sending FIN-ACK packet with ack number " + str(self.associatedSeqNum) + ", current state " + self.STATE[self.state])
         self.transport.write(finAckPacket.__serialize__())
 
     def processDataPkt(self, pkt):
@@ -87,7 +87,7 @@ class RIPPProtocol(StackingProtocol):
             print("It is Closing, data packet with sequence number " + str(pkt.SeqNo))
             AckNo = self.associatedSeqNum
             ackPacket = RIPPPacket.createAckPacket(AckNo)
-            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
+            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE[self.state])
             self.transport.write(ackPacket.__serialize__())
         elif pkt.SeqNo == self.associatedSeqNum:
             print("Received DATA packet with sequence number " + str(pkt.SeqNo))
@@ -95,7 +95,7 @@ class RIPPProtocol(StackingProtocol):
             self.higherProtocol().data_received(pkt.Data)
             AckNo = self.associatedSeqNum
             ackPacket = RIPPPacket.createAckPacket(AckNo)
-            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
+            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE[self.state])
             self.transport.write(ackPacket.__serialize__())
             while self.associatedSeqNum in self.receivedDataBuffer:
                 nextPkt = self.receivedDataBuffer.pop(self.associatedSeqNum)
@@ -106,14 +106,14 @@ class RIPPProtocol(StackingProtocol):
             self.receivedDataBuffer[pkt.SeqNo] = pkt
             # AckNo = self.associatedSeqNum
             # ackPacket = RIPPPacket.createAckPacket(AckNo)
-            # print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
+            # print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE[self.state])
             # self.transport.write(ackPacket.__serialize__())
         else:
             print("Error: Received DATA packet with lower sequence number " + str(pkt.SeqNo) + ",current: {!r}, discarded.".format(self.associatedSeqNum))
             AckNo = pkt.SeqNo + len(pkt.Data)
             ackPacket = RIPPPacket.createAckPacket(AckNo)
             self.transport.write(ackPacket.__serialize__())
-            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE_DESC[self.state])
+            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE[self.state])
 
     def processAckPkt(self, pkt):
         print("Received ACK packet with acknowledgement number " + str(pkt.AckNo))

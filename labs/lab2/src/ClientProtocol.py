@@ -11,7 +11,7 @@ class ClientProtocol(RIPPProtocol):
     def __init__(self):
         super().__init__()
         self.state = self.STATE_CLIENT_INITIAL_SYN
-        print("Initialized client with state " + self.STATE_DESC[self.state])
+        print("Initialized client with state " + self.STATE[self.state])
 
     def connection_made(self, transport):
         self.transport = transport
@@ -68,11 +68,11 @@ class ClientProtocol(RIPPProtocol):
                         self.transport.close()
 
                     else:
-                        print("Client: Wrong packet: sequence num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE_DESC[self.state]))
+                        print("Client: Wrong packet: sequence num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE[self.state]))
                 else:
                     print("Wrong packet checksum: " + str(pkt.CRC))
             else:
-                print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE_DESC[self.state]))
+                print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE[self.state]))
 
     def prepareForFin(self):
         print("Preparing for FIN...")

@@ -11,7 +11,7 @@ class ServerProtocol(RIPPProtocol):
     def __init__(self):
         super().__init__()
         self.state = self.STATE_SERVER_LISTEN
-        print("Initialized server with state " + self.STATE_DESC[self.state])
+        print("Initialized server with state " + self.STATE[self.state])
 
     def connection_made(self, transport):
         super().connection_made(transport)
@@ -63,11 +63,11 @@ class ServerProtocol(RIPPProtocol):
                         self.transport.close()
 
                     else:
-                        print("Server: Wrong packet: seq num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE_DESC[self.state]))
+                        print("Server: Wrong packet: seq num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE[self.state]))
                 else:
                     print("Wrong packet checksum: " + str(pkt.CRC))
             else:
-                print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE_DESC[self.state]))
+                print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE[self.state]))
 
     def prepareForFin(self):
         print("Preparing for Fin...")
