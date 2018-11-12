@@ -1,0 +1,336 @@
+
+
+
+Network Working Group                                        Y. Qiu, Ed.
+Request for Comments: 5246                                 K. Julia, Ed.
+Category: Experimental                    JHU Network Security Fall 2018
+                                                           November 2018
+
+
+                    Playground Request For Comments
+
+Abstract
+
+   This defines BSLPE(Best Secure Layer Protocol Ever), a protocol that
+   ensures secure and authenticated communication between two ends on
+   Playground network.
+
+Status of this Memo
+
+   This memo defines an Experimental Protocol for the Playground
+   Experiment.  It does not specify a Playground standard of any kind.
+   Discussion and suggestions for improvement are requested.
+   Distribution of this memo is unlimited.
+
+Copyright Notice
+
+   Copyright (c) 2018 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents
+   (http://trustee.ietf.org/license-info) in effect on the date of
+   publication of this document.  Please review these documents
+   carefully, as they describe your rights and restrictions with respect
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
+   the Trust Legal Provisions and are provided without warranty as
+   described in the Simplified BSD License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Qiu & Julia                   Experimental                      [Page 1]
+
+RFC 5246                         PRFC's                    November 2018
+
+
+Table of Contents
+
+   1.  Background  . . . . . . . . . . . . . . . . . . . . . . . . ancho
+     1.1.  Purpose of this Protocol  . . . . . . . . . . . . . . . ancho
+     1.2.  Structure of BSLPE protocol . . . . . . . . . . . . . . ancho
+   2.  BSLPE Handshake Protocol  . . . . . . . . . . . . . . . . . ancho
+     2.1.  Handshake Protocol Overview . . . . . . . . . . . . . . ancho
+   3.  Trust model . . . . . . . . . . . . . . . . . . . . . . . . ancho
+   4.  Algorithm Specifications  . . . . . . . . . . . . . . . . . ancho
+   5.  Confidential communications . . . . . . . . . . . . . . . . ancho
+   6.  Integrous communications  . . . . . . . . . . . . . . . . . ancho
+   7.  Shut Down . . . . . . . . . . . . . . . . . . . . . . . . . ancho
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . .     0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Qiu & Julia                   Experimental                      [Page 2]
+
+RFC 5246                         PRFC's                    November 2018
+
+
+1.  Background
+
+1.1.  Purpose of this Protocol
+
+   Purpose of this document is to provide standard for secure
+   communication within Playground3 networking system.  The document
+   comes with conceptual design of protocol that might need further
+   improvements.  Moreover, to fully apply implementation guidelines
+   provided in the document it is assumed that communication channel is
+   reliable.
+
+1.2.  Structure of BSLPE protocol
+
+   The protocol shall setup a secure connection, with mutual
+   authentication between two communicating parties, defines certificate
+   hierarchy, provides message confidentiality and integrity.  On top of
+   that, it is responsible for clean connection shutdown.
+
+
+2.  BSLPE Handshake Protocol
+
+2.1.  Handshake Protocol Overview
+
+   The BSLPE, established authenticated connection by exchanging
+   following messages:
+
+   A                            B
+   +  A, NA, Sid           +
+   +---------------------------->
+   |                            |
+   | NB, Sid, certB        |
+   <----------------------------+
+   |                            |
+   |pk(A), {PMS}(pkB), {hash(NB, B, PMS)}(inv(pk(A))),
+   |{|hash(K, msgs)|}clientK(NA, NB, K)
+   +---------------------------->
+   |                            |
+   |pk(B), {PMS}(pkA), {hash(NA, A, PMS)}(inv(pk(B))),
+   |{|hash(K, msgs)|}serverK(NA, NB, K)
+   |                            |
+   | <--------------------------+
+   |                            |
+   |                            |
+   |                            |
+   |                            |
+   +                            +
+   (finished)
+
+
+
+
+Qiu & Julia                   Experimental                      [Page 3]
+
+RFC 5246                         PRFC's                    November 2018
+
+
+   Figure 1.  Flow of Handshake
+
+                           Where: A a&#65533; Client
+       B = Server
+       NA = Nonce of A
+       NB = Nonce of B
+       Sid = Session ID
+       CertX = public key certificate of party X
+       PMS = Random number
+       {X}inv(pkA) = message X signed with private key of A
+       Hash(X) = hashing function applied on message X
+       K = prf (PMS, NA, NB)
+       prf = pseudo random function
+       clientK(NA, NB, K) = resulting client key
+       serverK(NA, NB, K) = resulting server key
+
+
+   All the fields are assumed to be transported as strings, with order
+   as shown in the figure.
+
+
+3.  Trust model
+
+   The BSLPE uses distributed trust model based on Web of Trust concept
+   and implements OpenPGP message format as in RFC 2015.  That approach
+   allows to grant different level of trust between parties.  The entity
+   granting trust shall maintain list with trusted nodes.  The trust is
+   measured by metrics, the lower number the higher trust.  Finally, the
+   best trust is assumed based on the shortest path to the certificate
+   issuer.
+
+
+4.  Algorithm Specifications
+
+   The BSLPE protocol applies a series of cryptographic algorithms to
+   ensure security, such as symmetric encryption, hashing and message
+   authentication code (MAC).
+
+   AES is a widely used symmetric encryption algorithm.  AES is a block
+   cipher with a 128-, 192-, or 256-bit keys and a 16-byte block size.
+   BSLPE currently supports the 128- and 256-bit key sizes.  The
+   protocol uses AES to authenticate the other party.  Once the two
+   parties have authenticated each other, they exchange a symmetric key
+   to encrypt the rest of the data transmission during the session.
+
+
+
+
+
+
+
+Qiu & Julia                   Experimental                      [Page 4]
+
+RFC 5246                         PRFC's                    November 2018
+
+
+5.  Confidential communications
+
+   For server authentication, the client uses the server's public key to
+   encrypt the data that is used to compute the secret key.  The server
+   can generate the secret key only if it can decrypt that data with the
+   correct private key.
+
+   For client authentication, the server uses the public key in the
+   client certificate to decrypt the data the client sends during the
+   handshake.  The exchange of finished messages that are encrypted with
+   the secret key confirms that authentication is complete.
+
+   If any of the authentication steps fail, the handshake fails and the
+   session terminates.
+
+
+6.  Integrous communications
+
+   This protocol applies verification process to ensure integrity of
+   transmitted data packets.
+
+   The connection under BSLPE is reliable.  Message transport includes a
+   message integrity check using a keyed MAC.  Secure hash functions
+   (e.g.,SHA-1, etc.) are used for MAC computations.
+
+   The input may be of any length, and aead-ciphered output is generally
+   larger than the input in order to accommodate the integrity check
+   value.
+
+
+7.  Shut Down
+
+   If one side of connection decides to terminate the connection, it
+   sends requirement of close to the other side.  The message of close
+   may contain a Error field, which indicates that it may cause the
+   unexpected termination.  If the termination is normal and initiated
+   from the application, the partner receiving message of close should
+   close the transport.  However, if there is an error, it should notify
+   the user about it.
+
+
+
+
+
+
+
+
+
+
+
+
+Qiu & Julia                   Experimental                      [Page 5]
+
+RFC 5246                         PRFC's                    November 2018
+
+
+Authors' Addresses
+
+   Yu Qiu (editor)
+   JHU Network Security Fall 2018
+   JHU 160 Malone Hall/3400 North Charles St.
+   Baltimore, MD  21218
+   USA
+
+   Email: yqiu19@jhu.edu
+
+
+   Kamil Macheta (editor)
+   JHU Network Security Fall 2018
+   JHU 160 Malone Hall/3400 North Charles St.
+   Baltimore, MD  21218
+   USA
+
+   Email: kmachet1@jhu.edu
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Qiu & Julia                   Experimental                      [Page 6]
+

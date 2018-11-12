@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="US-ASCII"?>
+<!-- This template is modified by Seth Nielson for creating P-RFC's
+    (Playground-RFC's). -->
+<!-- This template is for creating an Internet Draft using xml2rfc,
+    which is available here: http://xml2rfc.ietf.org. -->
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd" [
+<!-- One method to get references from the online citation libraries.
+    There has to be one entity for each item to be referenced.
+    An alternate method (rfc include) is described in the references. --><!ENTITY RFC2119 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml">
+<!ENTITY RFC2360 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2360.xml">
+<!ENTITY RFC2629 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2629.xml">
+<!ENTITY RFC3552 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.3552.xml">
+<!ENTITY RFC5226 SYSTEM "http://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.5226.xml">
+]>
+<?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
+<!-- used by XSLT processors -->
+<!-- For a complete list and description of processing instructions (PIs),
+    please see http://xml2rfc.ietf.org/authoring/README.html. -->
+<!-- Below are generally applicable Processing Instructions (PIs) that most I-Ds might want to use.
+    (Here they are set differently than their defaults in xml2rfc v1.32) -->
+<?rfc strict="yes" ?>
+<!-- give errors regarding ID-nits and DTD validation -->
+<!-- control the table of contents (ToC) -->
+<?rfc toc="yes"?>
+<!-- generate a ToC -->
+<?rfc tocdepth="4"?>
+<!-- the number of levels of subsections in ToC. default: 3 -->
+<!-- control references -->
+<?rfc symrefs="yes"?>
+<!-- use symbolic references tags, i.e, [RFC2119] instead of [1] -->
+<?rfc sortrefs="yes" ?>
+<!-- sort the reference entries alphabetically -->
+<!-- control vertical white space
+    (using these PIs as follows is recommended by the RFC Editor) -->
+<?rfc compact="yes" ?>
+<!-- do not start each main section on a new page -->
+<?rfc subcompact="no" ?>
+<!-- keep one blank line between list items -->
+<!-- end of list of popular I-D processing instructions -->
+<rfc category="exp" docName="rfc5246" ipr="trust200902" number="5246">
+    <!-- category values: std, bcp, info, exp, and historic
+    ipr values: trust200902, noModificationTrust200902, noDerivativesTrust200902,
+       or pre5378Trust200902, playgroundWinter201501
+    you can add the attributes updates="NNNN" and obsoletes="NNNN"
+    they will automatically be output with "(if approved)" -->
+
+    <!-- ***** FRONT MATTER ***** -->
+
+    <front>
+        <!-- The abbreviated title is used in the page header - it is only necessary if the
+        full title is longer than 39 characters -->
+
+        <title abbrev="PRFC's">Playground Request For Comments</title>
+
+        <!-- add 'role="editor"' below for the editors if appropriate -->
+
+        <!-- Another author who claims to be an editor -->
+
+        <author fullname="Yu Qiu" initials="Y.Q" role="editor" surname="Qiu">
+
+            <organization>JHU Network Security Fall 2018</organization>
+
+            <address>
+                <postal>
+                    <street>JHU 160 Malone Hall/3400 North Charles St.</street>
+
+                    <!-- Reorder these if your country does things differently -->
+
+                    <city>Baltimore</city>
+
+                    <region>MD</region>
+
+                    <code>21218</code>
+
+                    <country>USA</country>
+                </postal>
+                <email>yqiu19@jhu.edu</email>
+
+                <!-- uri and facsimile elements may also be added -->
+            </address>
+        </author>
+
+        <author fullname="Kamil Macheta" initials="K.M" role="editor" surname="Julia">
+            <organization>JHU Network Security Fall 2018</organization>
+
+            <address>
+
+                <postal>
+                    <street>JHU 160 Malone Hall/3400 North Charles St.</street>
+
+                    <!-- Reorder these if your country does things differently -->
+
+                    <city>Baltimore</city>
+
+                    <region>MD</region>
+
+                    <code>21218</code>
+
+                    <country>USA</country>
+                </postal>
+                <email>kmachet1@jhu.edu</email>
+
+                <!-- uri and facsimile elements may also be added -->
+            </address>
+        </author>
+
+        <date year="2018"/>
+
+        <!-- If the month and year are both specified and are the current ones, xml2rfc will fill
+        in the current day for you. If only the current year is specified, xml2rfc will fill
+     in the current day and month for you. If the year is not the current one, it is
+     necessary to specify at least a month (xml2rfc assumes day="1" if not specified for the
+     purpose of calculating the expiry date).  With drafts it is normally sufficient to
+     specify just the year. -->
+
+        <!-- Meta-data Declarations -->
+
+        <area>General</area>
+
+        <workgroup>Playground Experiment Director</workgroup>
+
+        <!-- WG name at the upperleft corner of the doc,
+        IETF is fine for individual submissions.
+     If this element is not present, the default is "Network Working Group",
+        which is used by the RFC Editor as a nod to the history of the IETF. -->
+
+        <keyword>PRFC</keyword>
+
+        <!-- Keywords will be incorporated into HTML output
+        files in a meta tag but they have no effect on text or nroff
+        output. If you submit your draft to the RFC Editor, the
+        keywords will be used for the search engine. -->
+
+        <abstract>
+            <t>
+            This defines BSLPE(Best Secure Layer Protocol Ever), a protocol that ensures secure and authenticated communication between two ends on Playground network.
+            </t>
+        </abstract>
+    </front>
+
+    <middle>
+        <section title="Background">
+            <section title="Purpose of this Protocol">
+                <t>
+                Purpose of this document is to provide standard for secure communication within Playground3 networking system. The document comes with conceptual design of protocol that might need further improvements. Moreover, to fully apply implementation guidelines provided in the document it is assumed that communication channel is reliable.</t>                
+            </section>
+                    
+            <section title="Structure of BSLPE protocol ">
+               <t>
+               The protocol shall setup a secure connection, with mutual authentication between two communicating parties, defines certificate hierarchy, provides message confidentiality and integrity. On top of that, it is responsible for clean connection shutdown.
+               </t>
+            </section>      
+        </section>  
+
+        <section title="BSLPE Handshake Protocol">
+            <section title="Handshake Protocol Overview">
+                <t>The BSLPE, established authenticated connection by exchanging following messages: </t>
+                <figure>
+                    <artwork><![CDATA[
+A                            B
++  A, NA, Sid           +
++---------------------------->
+|                            |
+| NB, Sid, certB        |
+<----------------------------+
+|                            |
+|pk(A), {PMS}(pkB), {hash(NB, B, PMS)}(inv(pk(A))),
+|{|hash(K, msgs)|}clientK(NA, NB, K)
++---------------------------->
+|                            |
+|pk(B), {PMS}(pkA), {hash(NA, A, PMS)}(inv(pk(B))),
+|{|hash(K, msgs)|}serverK(NA, NB, K)
+|                            |
+| <--------------------------+
+|                            |
+|                            |
+|                            |
+|                            |
++                            +
+(finished)]]>
+                    </artwork>
+                </figure>
+                <t>Figure 1. Flow of Handshake</t>
+
+               <figure>
+                     <artwork><![CDATA[
+                        Where: A – Client
+    B = Server
+    NA = Nonce of A
+    NB = Nonce of B
+    Sid = Session ID
+    CertX = public key certificate of party X
+    PMS = Random number
+    {X}inv(pkA) = message X signed with private key of A
+    Hash(X) = hashing function applied on message X
+    K = prf (PMS, NA, NB)
+    prf = pseudo random function
+    clientK(NA, NB, K) = resulting client key
+    serverK(NA, NB, K) = resulting server key
+]]>
+                     </artwork>       
+                </figure>
+                <t>
+                All the fields are assumed to be transported as strings, with order as shown in the figure. </t>
+            </section>
+            </section>
+
+        <section title="Trust model">
+                <t>The BSLPE uses distributed trust model based on Web of Trust concept and implements OpenPGP message format as in RFC 2015. That approach allows to grant different level of trust between parties. The entity granting trust shall maintain list with trusted nodes. The trust is measured by metrics, the lower number the higher trust. Finally, the best trust is assumed based on the shortest path to the certificate issuer. </t>
+        </section>
+
+        <section title="Algorithm Specifications">
+                <t>The BSLPE protocol applies a series of cryptographic algorithms to ensure security, such as symmetric encryption, hashing and message authentication code (MAC).</t>
+
+                <t>
+                    AES is a widely used symmetric encryption algorithm. AES is a block cipher with a 128-, 192-, or 256-bit keys and a 16-byte
+                    block size. BSLPE currently supports the 128- and 256-bit key sizes. The protocol uses AES to authenticate the other party. Once the two parties have authenticated each other, they exchange a symmetric key to encrypt the rest of the data transmission during the session.
+                </t>           
+    </section>
+
+    <section title="Confidential communications">
+                <t>
+                For server authentication, the client uses the server's public key to encrypt the data that is used to compute the secret key. The server can generate the secret key only if it can decrypt that data with the correct private key.</t>
+                <t>For client authentication, the server uses the public key in the client certificate to decrypt the data the client sends during the handshake. The exchange of finished messages that are encrypted with the secret key confirms that authentication is complete.</t>
+                <t>If any of the authentication steps fail, the handshake fails and the session terminates.</t>
+            </section>
+
+    <section title="Integrous communications">
+                <t>
+                    This protocol applies verification process to ensure integrity of transmitted data packets.</t>
+                <t>
+                   The connection under BSLPE is reliable. Message transport includes a message integrity check using a keyed MAC. Secure hash functions (e.g.,SHA-1, etc.) are used for MAC computations. </t>
+                <t>
+                    The input may be of any length, and aead-ciphered output is generally larger than the input in order to accommodate the integrity check value.
+                </t>
+            </section>
+
+    <section title="Shut Down">
+        <t>
+            If one side of connection decides to terminate the connection, it sends requirement of close to the other side. 
+            The message of close may contain a Error field, which indicates that it may cause the unexpected termination. If the termination is normal and initiated from the application, the partner receiving message of close should close the transport. However, if there is an error, it should notify the user about it.
+        </t>
+    </section>
+     
+
+</middle>
+    <!--  *****BACK MATTER ***** -->
+
+    <back>
+        <!-- References split into informative and normative -->
+
+        <!-- There are 2 ways to insert reference entries from the citation libraries:
+    1. define an ENTITY at the top, and use "ampersand character"RFC2629; here (as shown)
+    2. simply use a PI "less than character"?rfc include="reference.RFC.2119.xml"?> here
+       (for I-Ds: include="reference.I-D.narten-iana-considerations-rfc2434bis.xml")
+
+    Both are cited textually in the same manner: by using xref elements.
+    If you use the PI option, xml2rfc will, by default, try to find included files in the same
+    directory as the including file. You can also define the XML_LIBRARY environment variable
+    with a value containing a set of directories to search.  These can be either in the local
+    filing system or remote ones accessed by http (http://domain/dir/... ).-->
+
+        <!-- Change Log
+
+v00 2018-11-09  EBD   Initial version
+
+  -->
+    </back>
+</rfc>
+
+
