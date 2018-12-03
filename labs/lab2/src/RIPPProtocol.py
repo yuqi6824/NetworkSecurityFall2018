@@ -109,11 +109,11 @@ class RIPPProtocol(StackingProtocol):
             # print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE[self.state])
             # self.transport.write(ackPacket.__serialize__())
         else:
-            print("Error: Received DATA packet with lower sequence number " + str(pkt.SeqNo) + ",current: {!r}, discarded.".format(self.associatedSeqNum))
+            print("Error: Received DATA packet with lower sequence number ")
             AckNo = pkt.SeqNo + len(pkt.Data)
             ackPacket = RIPPPacket.createAckPacket(AckNo)
             self.transport.write(ackPacket.__serialize__())
-            print("Sending ACK packet with acknowledgement number" + str(AckNo) + ", current state " + self.STATE[self.state])
+            print("Sending ACK packet with acknowledgement number" + str(AckNo))
 
     def processAckPkt(self, pkt):
         print("Received ACK packet with acknowledgement number " + str(pkt.AckNo))

@@ -57,7 +57,7 @@ class ServerProtocol(RIPPProtocol):
 
                     elif (pkt.Type, self.state, pkt.AckNo) == (RIPPPacket.TYPE_FIN + RIPPPacket.TYPE_ACK, self.STATE_SERVER_CLOSING, self.seqNum + 1) or \
                     (pkt.Type, self.state, pkt.AckNo) == (RIPPPacket.TYPE_FIN + RIPPPacket.TYPE_ACK, self.STATE_SERVER_CLOSED, self.seqNum + 1):
-                        Print("Received FIN_ACK packet with ack number " + str(pkt.AckNo))
+                        print("Received FIN_ACK packet with ack number " + str(pkt.AckNo))
                         self.state = self.STATE_SERVER_CLOSED
                         print("Closing...")
                         self.transport.close()
