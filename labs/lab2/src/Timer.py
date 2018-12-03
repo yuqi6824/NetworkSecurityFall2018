@@ -21,13 +21,6 @@ class shutdown():
 	def cancel(self):
 		self.task.cancel()
 
-'''class AckTimer(object):
-	def __init__(self, timeout, callback, loop):
-		self.timeout = timeout
-		self.callback = callback
-		self.loop = loop
-		self.loop = self.loop.call_later(timeout, self.callback)'''
-
 class PopTimer():
 	def __init__(self, timeout, callback, loop):
 		self.timeout = timeout
