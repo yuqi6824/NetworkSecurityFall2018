@@ -71,10 +71,10 @@ class RIPPPacket(PacketType):
         return pkt
 
     def calculateChecksum(self):
-        oldChecksum = self.CRC
+        previousChecksum = self.CRC
         self.CRC = b""
         bytes = self.__serialize__()
-        self.CRC = oldChecksum
+        self.CRC = previousChecksum
         return hashlib.sha256(bytes).digest()
         
     def verifyChecksum(self):
