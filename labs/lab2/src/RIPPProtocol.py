@@ -59,7 +59,7 @@ class RIPPProtocol(StackingProtocol):
 
     def sendSyn(self):
         synPacket = RIPPPacket.createSynPacket(self.initialSeq)
-        print("Sending SYN packet with sequence number " + str(self.initialSeq) +", current state " + self.STATE[self.state])
+        print("Sending SYN packet with sequence number " + str(self.initialSeq) + ", current state " + self.STATE[self.state])
         self.transport.write(synPacket.__serialize__())
 
     def sendSynAck(self, synAck_seqNum):

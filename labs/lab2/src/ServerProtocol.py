@@ -11,7 +11,7 @@ class ServerProtocol(RIPPProtocol):
     def __init__(self):
         super().__init__()
         self.state = self.STATE_SERVER_LISTEN
-        print("Initialized server with state " + self.STATE[self.state])
+        print("Start server with state " + self.STATE[self.state])
 
     def connection_made(self, transport):
         super().connection_made(transport)
@@ -37,7 +37,7 @@ class ServerProtocol(RIPPProtocol):
                             higherTransport = RIPPTransport(self.transport, self)
                             self.higherProtocol().connection_made(higherTransport)
                         else:
-                            print("Server: Wrong ACK packet: acknowledgement number: {!r}, seq number: {!r}, expected: {!r}, {!r}".format(pkt.AckNo, pkt.SeqNo, self.seqNum, self.associatedSeqNum))
+                            print("Server: Wrong ACK packet: acknowledgement number:"+str(pkt.AckNo))
 
                     elif pkt.Type == RIPPPacket.TYPE_ACK and self.state in (self.STATE_SERVER_TRANSMISSION, self.STATE_SERVER_CLOSING):
                         self.processAckPkt(pkt)
@@ -63,11 +63,11 @@ class ServerProtocol(RIPPProtocol):
                         self.transport.close()
 
                     else:
-                        print("Server: Wrong packet: seq num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE[self.state]))
+                        print("Server: Wrong packet")
                 else:
                     print("Wrong packet checksum: " + str(pkt.CRC))
             else:
-                print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE[self.state]))
+                print("Wrong packet class type:")
 
     def prepareForFin(self):
         print("Preparing for Fin...")

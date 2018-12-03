@@ -50,7 +50,7 @@ class RIPPTransport(StackingTransport):
         #import pdb; pdb.set_trace()
         if self.protocol:
             if not self.protocol.isClosing():
-                print("RIPPTransport: Write got {} bytes of data to package".format(len(data)))
+                print("RIPPTransport: Write data to package")
                 # Create data chunks
                 i = 0
                 index = 0
@@ -66,7 +66,7 @@ class RIPPTransport(StackingTransport):
                     ackNumber = self.protocol.seqNum + len(sentData)
                     #import pdb; pdb.set_trace()
                     if len(self.protocol.sentDataCache) <= self.protocol.WINDOW_SIZE:
-                        print("RIPPTransport: Sending packet {!r}, sequence number: {!r}".format(index, pkt.SeqNo))
+                        print("RIPPTransport: Sending packet, sequence number:" + str(pkt.SeqNo))
                         #import pdb; pdb.set_trace()
                         self.protocol.transport.write(pkt.__serialize__())
                         self.protocol.sentDataCache[ackNumber] = (pkt, time.time())
@@ -78,16 +78,15 @@ class RIPPTransport(StackingTransport):
                     else:
                         #self.protocol.sentDataCache.pop(0)
                         #self.protocol.sentDataCache.pop(1)
-                        print("RIPPTransport: Buffering packet {!r}, sequence number: {!r}".format(index, pkt.SeqNo))
+                        print("RIPPTransport: Buffering packet")
                         self.protocol.sendingDataBuffer.append((ackNumber, pkt))
                     self.protocol.seqNum += len(sentData)
-                print("RIPPTransport: Batch transmission finished, number of packets sent: {!r}".format(index))
+                print("RIPPTransport: Batch transmission finished")
             else:
-                print("RIPPTransport: protocol is closing, unable to write anymore.")
+                print("RIPPTransport: Closing")
 
         else:
-            print("RIPPTransport: Undefined protocol, writing anyway")
-            print("RIPPTransport: Write got {} bytes of data to pass to lower layer".format(len(data)))
+            print("Writing anyway")
             super().write(data)
 
     def close(self):

@@ -11,7 +11,7 @@ class ClientProtocol(RIPPProtocol):
     def __init__(self):
         super().__init__()
         self.state = self.STATE_CLIENT_INITIAL_SYN
-        print("Initialized client with state " + self.STATE[self.state])
+        print("Start client with state " + self.STATE[self.state])
 
     def connection_made(self, transport):
         self.transport = transport
@@ -37,7 +37,7 @@ class ClientProtocol(RIPPProtocol):
                                 higherTransport = RIPPTransport(self.transport, self)
                                 self.higherProtocol().connection_made(higherTransport)
                             else:
-                                print("Client: Wrong SYN_ACK packet: ACK number: {!r}, expected: {!r}".format(pkt.AckNo, self.seqNum + 1))
+                                print("Client: Wrong SYN_ACK packet: ACK number" + str(pkt.AckNo) + " , expected:" + str(self.seqNum + 1))
                         else:
                             self.sendAck()
 
@@ -68,11 +68,11 @@ class ClientProtocol(RIPPProtocol):
                         self.transport.close()
 
                     else:
-                        print("Client: Wrong packet: sequence num {!r}, type {!r}， current state: {!r}".format(pkt.SeqNo, pkt.Type, self.STATE[self.state]))
+                        print("Client: Wrong packet: sequence num:" + str(pkt.SeqNo) + ", type:" + str(pkt.Type) +" current state:"+ str(self.STATE[self.state]))
                 else:
                     print("Wrong packet checksum: " + str(pkt.CRC))
             else:
-                print("Wrong packet class type: {!r}, state: {!r} ".format(str(type(pkt)), self.STATE[self.state]))
+                print("Wrong packet class type:" + str(type(pkt) + ",state: " + self.STATE[self.state]))
 
     def prepareForFin(self):
         print("Preparing for FIN...")
