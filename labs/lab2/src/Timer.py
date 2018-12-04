@@ -1,5 +1,3 @@
-import asyncio
-
 class Timer():
 	def __init__(self, timeout, callback, pkt, loop):
 		self.timeout = timeout
@@ -11,6 +9,7 @@ class Timer():
 	def cancel(self):
 		self.task.cancel()
 
+
 class shutdown():
 	def __init__(self, timeout, callback, loop):
 		self.timeout = timeout
@@ -21,6 +20,7 @@ class shutdown():
 	def cancel(self):
 		self.task.cancel()
 
+
 class backlog():
 	def __init__(self, timeout, callback, loop):
 		self.timeout = timeout
@@ -30,5 +30,3 @@ class backlog():
 
 	
 			
-			
-		

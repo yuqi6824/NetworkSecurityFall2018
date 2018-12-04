@@ -1,9 +1,9 @@
 import asyncio
 import random
-from playground.network.common import StackingProtocol
-from .RIPPPacket import RIPPPacket
-from .Timer import shutdown
 import time
+from playground.network.common import StackingProtocol
+from ..Packets.RIPPPacket import RIPPPacket
+from ..Timer import shutdown
 
 
 class RIPPProtocol(StackingProtocol):

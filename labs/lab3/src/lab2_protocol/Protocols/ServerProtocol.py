@@ -1,5 +1,5 @@
-from .RIPPPacket import RIPPPacket
-from .RIPPTransport import RIPPTransport
+from ..Packets.RIPPPacket import RIPPPacket
+from ..Transports.RIPPTransport import RIPPTransport
 from .RIPPProtocol import RIPPProtocol
 
 
@@ -50,4 +50,3 @@ class ServerProtocol(RIPPProtocol):
                     print("%s Wrong packet checksum: %s" % (self.__class__.__name__, str(pkt.CRC)))
             else:
                 print("%s Wrong packet class type" % self.__class__.__name__)
-

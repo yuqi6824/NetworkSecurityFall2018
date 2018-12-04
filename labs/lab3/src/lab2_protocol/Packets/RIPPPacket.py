@@ -3,15 +3,15 @@ from playground.network.packet.fieldtypes import UINT16, STRING, UINT8, UINT32, 
 from playground.network.packet.fieldtypes.attributes import Optional
 import hashlib
 
+
 class RIPPPacket(PacketType):
+    DEFINITION_IDENTIFIER = "RIPP.kandarp.packet"
+    DEFINITION_VERSION = "1.0"
 
     TYPE_SYN = "SYN"
     TYPE_ACK = "ACK"
     TYPE_FIN = "FIN"
     TYPE_DATA = "DATA"
-
-    DEFINITION_IDENTIFIER = "RIPP.kandarp.packet"
-    DEFINITION_VERSION = "1.0"
 
     FIELDS = [
         ("Type", STRING),
@@ -25,57 +25,57 @@ class RIPPPacket(PacketType):
         super().__init__()
         self.CRC = b""
 
-    def createSynPacket(seq):
+    def createSynPkt(seq):
         pkt = RIPPPacket()
         pkt.Type = pkt.TYPE_SYN
         pkt.SeqNo = seq
-        pkt.CRC = pkt.calculateChecksum()
+        pkt.CRC = pkt.calculate_CRC()
         return pkt
 
-    def createSynAckPacket(seq, ack):
+    def createSynAckPkt(seq, ack):
         pkt = RIPPPacket()
         pkt.Type = pkt.TYPE_SYN + pkt.TYPE_ACK
         pkt.SeqNo = seq
         pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
+        pkt.CRC = pkt.calculate_CRC()
         return pkt
 
-    def createAckPacket(ack):
+    def createAckPkt(ack):
         pkt = RIPPPacket()
         pkt.Type = pkt.TYPE_ACK
         pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
+        pkt.CRC = pkt.calculate_CRC()
         return pkt
 
-    def createFinPacket(seq, ack):
+    def createFinPkt(seq, ack):
         pkt = RIPPPacket()
         pkt.Type = pkt.TYPE_FIN
         pkt.SeqNo = seq
         pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
+        pkt.CRC = pkt.calculate_CRC()
         return pkt
 
-    def createFinAckPacket(ack):
+    def createFinAckPkt(ack):
         pkt = RIPPPacket()
         pkt.Type = pkt.TYPE_FIN + pkt.TYPE_ACK
         pkt.AckNo = ack
-        pkt.CRC = pkt.calculateChecksum()
+        pkt.CRC = pkt.calculate_CRC()
         return pkt
 
-    def createDataPacket(seq, data):
+    def createDataPkt(seq, data):
         pkt = RIPPPacket()
         pkt.Type = pkt.TYPE_DATA
         pkt.SeqNo = seq
         pkt.Data = data
-        pkt.CRC = pkt.calculateChecksum()
+        pkt.CRC = pkt.calculate_CRC()
         return pkt
 
-    def calculateChecksum(self):
-        oldChecksum = self.CRC
+    def calculate_CRC(self):
+        previousChecksum = self.CRC
         self.CRC = b""
         bytes = self.__serialize__()
-        self.CRC = oldChecksum
+        self.CRC = previousChecksum
         return hashlib.sha256(bytes).digest()
-        
-    def verifyChecksum(self):
-        return self.CRC == self.calculateChecksum()
+
+    def verify_CRC(self):
+        return self.CRC == self.calculate_CRC()
