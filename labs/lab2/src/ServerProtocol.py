@@ -2,7 +2,6 @@ from .RIPPPacket import RIPPPacket
 from .RIPPTransport import RIPPTransport
 from .RIPPProtocol import RIPPProtocol
 import time
-from .Timer import Timer
 
 
 class ServerProtocol(RIPPProtocol):
@@ -74,6 +73,3 @@ class ServerProtocol(RIPPProtocol):
     def connection_lost(self, exc):
         print("Connection closed")
         self.higherProtocol().connection_lost(exc)
-
-    def isClosing(self):
-        return self.state == self.SERVER_CLOSING or self.state == self.SERVER_CLOSED

@@ -21,7 +21,7 @@ class shutdown():
 	def cancel(self):
 		self.task.cancel()
 
-class PopTimer():
+class backlog():
 	def __init__(self, timeout, callback, loop):
 		self.timeout = timeout
 		self.callback = callback

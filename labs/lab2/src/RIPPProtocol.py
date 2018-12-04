@@ -79,7 +79,7 @@ class RIPPProtocol(StackingProtocol):
         self.transport.write(finAckPacket.__serialize__())
 
     def handleDataPacket(self, pkt):
-        if self.isClosing():
+        if self.state == self.SERVER_CLOSING or self.state == self.SERVER_CLOSED or self.state == self.CLIENT_CLOSING or self.state == self.CLIENT_CLOSED:
             print("It is Closing, data packet with sequence number " + str(pkt.SeqNo))
             AckNo = self.associatedSeqNum
             ackPacket = RIPPPacket.createAckPacket(AckNo)
@@ -100,9 +100,7 @@ class RIPPProtocol(StackingProtocol):
         elif pkt.SeqNo > self.associatedSeqNum:
             print("Received DATA packet with higher sequence number " + str(pkt.SeqNo) + ", buffered.")
             self.DataReceived[pkt.SeqNo] = pkt
-            # AckNo = self.associatedSeqNum
-            # ackPacket = RIPPPacket.createAckPacket(AckNo)
-            # self.transport.write(ackPacket.__serialize__())
+
         else:
             print("Error: Received DATA packet with lower sequence number ")
             AckNo = pkt.SeqNo + len(pkt.Data)
@@ -120,6 +118,3 @@ class RIPPProtocol(StackingProtocol):
         while latestAckNo in list(self.sentDataPkt):
             del self.sentDataPkt[latestAckNo]
             break
-
-    def isClosing(self):
-        raise NotImplementedError("isClosing() not implemented")

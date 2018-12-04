@@ -79,6 +79,3 @@ class ClientProtocol(RIPPProtocol):
         print("Connection closed")
         self.higherProtocol().connection_lost(exc)
         self.transport = None
-
-    def isClosing(self):
-        return self.state == self.CLIENT_CLOSING or self.state == self.CLIENT_CLOSED
